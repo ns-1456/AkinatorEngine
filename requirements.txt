@@ -1,0 +1,9 @@
+torch
+fastapi
+uvicorn
+pandas
+numpy
+scipy
+requests
+pydantic
+py7zr

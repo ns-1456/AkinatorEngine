@@ -1,0 +1,305 @@
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Akinator Clone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --app-bg: #09090b;
+      --stage-bg: #18181b;
+      --text-primary: #ffffff;
+      --text-secondary: #a1a1aa;
+      --border-color: #27272a;
+      --glass-border: rgba(255,255,255,0.1);
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      padding: 1rem;
+      min-height: 100vh;
+      background-color: var(--app-bg);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container { max-width: 520px; width: 100%; }
+    header { text-align: center; margin-bottom: 1.5rem; }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      margin: 0 0 0.25rem 0;
+      color: var(--text-primary);
+      background: linear-gradient(to bottom right, #fff, #aaa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    @supports (background-clip: text) {
+      header h1 { -webkit-text-fill-color: transparent; }
+    }
+    header p { margin: 0; color: var(--text-secondary); font-size: 1rem; }
+    .genie-area {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+    .genie-area.thinking .genie-orb { animation: pulse 1s ease-in-out infinite; }
+    .genie-orb {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.4) 40%, rgba(39,39,42,0.8) 70%, #18181b);
+      box-shadow: 0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(255,255,255,0.08), inset -10px -10px 20px rgba(0,0,0,0.3);
+      border: 1px solid var(--glass-border);
+    }
+    .lamp-base {
+      width: 60px;
+      height: 24px;
+      margin-top: -8px;
+      background: linear-gradient(180deg, #3f3f46 0%, #27272a 100%);
+      border-radius: 0 0 30px 30px;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.08), 0 4px 8px rgba(0,0,0,0.4);
+      border: 1px solid var(--border-color);
+    }
+    @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.9; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes dramaticEntrance {
+      0% { opacity: 0; filter: blur(10px); transform: translateY(20px) scale(0.98); }
+      100% { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+    }
+    .speech-wrap { position: relative; margin-bottom: 1.25rem; }
+    .speech-bubble {
+      background: #111;
+      color: var(--text-primary);
+      padding: 1.25rem 1.5rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+      position: relative;
+      animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .speech-bubble::before {
+      content: '';
+      position: absolute;
+      left: 24px;
+      top: -8px;
+      border: 8px solid transparent;
+      border-bottom-color: #111;
+    }
+    .question-num {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+    .question-text { font-size: 1.15rem; line-height: 1.5; font-weight: 500; }
+    .answers {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .answers button {
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.6rem 1rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 99px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.08);
+      color: var(--text-primary);
+      transition: all 0.2s ease;
+    }
+    .answers button:hover {
+      background: rgba(255,255,255,0.15);
+      transform: scale(1.02);
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    }
+    .btn-yes { border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.15); color: #4ade80; }
+    .btn-yes:hover { background: rgba(74,222,128,0.25); box-shadow: 0 0 20px rgba(74,222,128,0.2); }
+    .btn-no { border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.15); color: #f87171; }
+    .btn-no:hover { background: rgba(248,113,113,0.25); box-shadow: 0 0 20px rgba(248,113,113,0.2); }
+    .btn-dont { color: var(--text-secondary); }
+    .btn-probably { border-color: rgba(74,222,128,0.3); color: #86efac; }
+    .btn-probably-not { border-color: rgba(248,113,113,0.3); color: #fca5a5; }
+    .guess-row { text-align: center; margin-bottom: 1rem; }
+    .btn-guess {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 12px 24px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-guess:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    }
+    .guess-result {
+      margin-top: 1rem;
+      padding: 1.25rem;
+      background: #111;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      text-align: center;
+      animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .guess-result strong { color: #4ade80; }
+    .start-card {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      background: var(--stage-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      animation: dramaticEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .btn-start {
+      font-family: var(--font-sans);
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 12px 24px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      border-radius: 99px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+    .btn-start:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    }
+    .hidden { display: none !important; }
+    .error { color: #f87171; margin-top: 0.75rem; text-align: center; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Akinator Clone</h1>
+      <p>Think of a person. I will ask questions and try to guess who it is.</p>
+    </header>
+    <div id="start" class="start-card">
+      <button class="btn-start" onclick="startGame()">Start game</button>
+    </div>
+    <div id="game" class="hidden">
+      <div class="genie-area" id="genieArea">
+        <div>
+          <div class="genie-orb"></div>
+          <div class="lamp-base"></div>
+        </div>
+      </div>
+      <div class="speech-wrap">
+        <div class="speech-bubble">
+          <span class="question-num" id="questionNum">Question 1</span>
+          <div class="question-text" id="question"></div>
+        </div>
+      </div>
+      <div class="answers">
+        <button class="btn-yes" onclick="answer(1)">Yes</button>
+        <button class="btn-no" onclick="answer(0)">No</button>
+        <button class="btn-dont" onclick="answer(0.5)">Don't know</button>
+        <button class="btn-probably" onclick="answer(0.75)">Probably</button>
+        <button class="btn-probably-not" onclick="answer(0.25)">Probably not</button>
+      </div>
+      <div class="guess-row">
+        <button class="btn-guess" onclick="guess()">That's who I was thinking of</button>
+      </div>
+      <div id="guessResult" class="guess-result hidden"></div>
+    </div>
+    <div id="error" class="error hidden"></div>
+  </div>
+  <script>
+    let sessionId = null;
+    let questionCount = 1;
+    function api(path, body) {
+      return fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+        .then(function(r) {
+          if (!r.ok) return r.json().then(function(j) { throw new Error(j.detail || r.statusText); });
+          return r.json();
+        });
+    }
+    function showError(msg) {
+      var el = document.getElementById('error');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+    function hideError() {
+      document.getElementById('error').classList.add('hidden');
+    }
+    function setThinking(on) {
+      var area = document.getElementById('genieArea');
+      if (on) area.classList.add('thinking'); else area.classList.remove('thinking');
+    }
+    function updateQuestionNum() {
+      document.getElementById('questionNum').textContent = 'Question ' + questionCount;
+    }
+    function startGame() {
+      hideError();
+      questionCount = 1;
+      setThinking(true);
+      api('/start_game', {}).then(function(res) {
+        setThinking(false);
+        sessionId = res.session_id;
+        document.getElementById('start').classList.add('hidden');
+        document.getElementById('game').classList.remove('hidden');
+        document.getElementById('guessResult').classList.add('hidden');
+        updateQuestionNum();
+        document.getElementById('question').textContent = res.question;
+      }).catch(function(e) {
+        setThinking(false);
+        showError(e.message);
+      });
+    }
+    function answer(value) {
+      hideError();
+      setThinking(true);
+      api('/answer', { session_id: sessionId, answer_value: value }).then(function(res) {
+        setThinking(false);
+        questionCount += 1;
+        updateQuestionNum();
+        document.getElementById('question').textContent = res.question || 'No more questions. Click "That\'s who I was thinking of" for my guess.';
+        if (res.top_guess) {
+          document.getElementById('guessResult').innerHTML = 'I think it\'s <strong>' + res.top_guess + '</strong> (' + Math.round(res.top_guess_probability * 100) + '%)';
+          document.getElementById('guessResult').classList.remove('hidden');
+        }
+      }).catch(function(e) {
+        setThinking(false);
+        showError(e.message);
+      });
+    }
+    function guess() {
+      hideError();
+      setThinking(true);
+      api('/guess', { session_id: sessionId }).then(function(res) {
+        setThinking(false);
+        document.getElementById('guessResult').innerHTML = 'I guess: <strong>' + res.name + '</strong> (' + Math.round(res.probability * 100) + '%)';
+        document.getElementById('guessResult').classList.remove('hidden');
+      }).catch(function(e) {
+        setThinking(false);
+        showError(e.message);
+      });
+    }
+  </script>
